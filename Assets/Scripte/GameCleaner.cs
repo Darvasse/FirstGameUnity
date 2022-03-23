@@ -27,16 +27,23 @@ public class GameCleaner : MonoBehaviour
     {
         SceneManager.LoadScene("Level_1", LoadSceneMode.Single);
     }
+
+    public void SelectLevel2()
+    {
+        SceneManager.LoadScene("Level_2", LoadSceneMode.Single);
+    }
+
+    public void SelectLevel3()
+    {
+        SceneManager.LoadScene("Level_3", LoadSceneMode.Single);
+    }
     
     public void SelectOptionLevel()
     {
         SceneManager.LoadScene("Option_Scene", LoadSceneMode.Single);
     }
     
-    public void SelectLevel2()
-    {
-        SceneManager.LoadScene("Level_2", LoadSceneMode.Single);
-    }
+    
     public void QuitGame()
     {
         Application.Quit();
