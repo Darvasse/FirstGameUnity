@@ -12,6 +12,7 @@ TagManager:
   - AttackJoueur
   - NoArmOsbtacle
   - LevelChanger
+  - Ladder
   layers:
   - Default
   - TransparentFX

@@ -34,7 +34,7 @@ public class playerController : MonoBehaviour
     bool InvokeDJumpOnce = true;
     public float HurtTime;
     bool isHurt = false;
-    bool canMove = true,animattack =true;
+    bool canMove = true,animattack =true,isClimbing = false;
 
     //private Vector3 lastMoveDir;
 
@@ -55,16 +55,7 @@ public class playerController : MonoBehaviour
     {
         if (canMove && grounded&&Input.GetAxis("Jump") > 0)
         {
-            DoubleJump = false;
-            anim.SetBool("IsGrounded", false);
-            playerRB.velocity = new Vector2(playerRB.velocity.x, 0f);
-            playerRB.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
-            if (InvokeDJumpOnce)
-            {
-                Invoke("toggleDoubleJump", 0.3f);
-                InvokeDJumpOnce = false;
-            }
-            
+            Jump();
         }
         if (canMove && !grounded && DoubleJump && (Input.GetAxis("Jump") > 0))
         {
@@ -127,6 +118,8 @@ public class playerController : MonoBehaviour
             canMove = !canMove;
             anim.SetBool("IsAttacking", false);
         }
+        Debug.LogError(canMove);
+
     }
     public void IsAttackEnd()
     {
@@ -146,7 +139,18 @@ public class playerController : MonoBehaviour
     {
         isHurt = !isHurt;
     }
-
+    private void Jump()
+    {
+        DoubleJump = false;
+        anim.SetBool("IsGrounded", false);
+        playerRB.velocity = new Vector2(playerRB.velocity.x, 0f);
+        playerRB.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
+        if (InvokeDJumpOnce)
+        {
+            Invoke("toggleDoubleJump", 0.3f);
+            InvokeDJumpOnce = false;
+        }
+    }
     public void toggleDoubleJump()
     {
         DoubleJump = true;
@@ -190,5 +194,38 @@ public class playerController : MonoBehaviour
     public void UpdateRespawn()
     {
         RespawnJump.transform.position = gameObject.transform.position;
+    }
+    private void Climb(Collider2D collider)
+    {
+        Debug.Log("climbing");
+        transform.position = new Vector2(collider.bounds.center.x,transform.position.y);
+
+        transform.position = Vector2.MoveTowards(transform.position, new Vector2(collider.transform.position.x,collider.transform.position.y-collider.bounds.size.y/2),1000);
+    }
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "Ladder")
+        {
+            isClimbing = true;
+            anim.SetBool("isClimbing", true);
+            canMove = false;
+            playerRB.gravityScale = 0;
+            playerCollider.enabled = false;
+            Climb(collision);
+
+        }
+    }
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.tag == "Ladder")
+        {
+            Debug.Log("noooooooo");
+            isClimbing = false;
+            playerCollider.enabled = true;
+            playerRB.gravityScale = 1;
+            anim.SetBool("isClimbing", false);
+            canMove = true;
+            Jump();
+        }
     }
 }
